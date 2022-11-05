@@ -1,3 +1,29 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends":[
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "json/recommended",
+    "extends": "next/core-web-vitals"
+  ],
+  "env": {
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "rules": {
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never"
+      }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  }
 }
