@@ -1,9 +1,8 @@
 {
-  "extends":[
+  "extends": [
     "eslint:recommended",
     "plugin:prettier/recommended",
-    "json/recommended",
-    "extends": "next/core-web-vitals"
+    "next/core-web-vitals"
   ],
   "env": {
     "node": true,
