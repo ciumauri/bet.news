@@ -18,7 +18,7 @@ export default function Home({ product }: HomeProps) {
   return (
     <>
       <Head>
-        <title>Home | ig.news</title>
+        <title>Home | bet.news</title>
       </Head>
 
       <main className={styles.contentContainer}>
@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     amount: new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-    }).format(price. / 100),
+    }).format(price.unit_amount / 100),
   }
 
   return {
