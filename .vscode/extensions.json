@@ -2,6 +2,7 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "irongeek.vscode-env",
-    "mikestead.dotenv"
+    "mikestead.dotenv",
+    "github.copilot"
   ]
 }
