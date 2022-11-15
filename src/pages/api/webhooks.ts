@@ -1,7 +1,9 @@
+/* eslint-disable import/no-anonymous-default-export */
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Readable } from 'stream'
 import Stripe from 'stripe'
 import { stripe } from '../../services/stripe'
+import { saveSubscription } from './_lib/managerSubcription'
 
 async function buffer(readable: Readable) {
   const chunks = []
@@ -19,7 +21,11 @@ export const config = {
   },
 }
 
-const relevantEvents = new Set(['checkout.session.completed'])
+const relevantEvents = new Set([
+  'checkout.session.completed',
+  'customer.subscription.update',
+  'customer.subscription.deleted',
+])
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
@@ -31,22 +37,48 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       event = stripe.webhooks.constructEvent(
         buf,
-        secret,
-        process.env.STRIPE_WEBHOOK_SECRET
+        secret as string,
+        process.env.STRIPE_WEBHOOK_SECRET as string
       )
     } catch (err) {
-      return res.status(400).send(`Webhook error: ${err.message}`)
+      return res.status(400).send('Webhook error - ' + err)
     }
 
     const { type } = event
 
     if (relevantEvents.has(type)) {
-      console.log('Evento recebido', event)
+      try {
+        switch (type) {
+          case 'customer.subscription.update':
+          case 'customer.subscription.deleted':
+            const subscription = event.data.object as Stripe.Subscription
+
+            await saveSubscription(
+              subscription.id,
+              subscription.customer.toString(),
+              false
+            )
+
+          case 'checkout.session.completed':
+            const checkoutSession = event.data.object as Stripe.Checkout.Session
+
+            await saveSubscription(
+              checkoutSession.subscription?.toString() as string,
+              checkoutSession.customer?.toString() as string,
+              true
+            )
+            break
+          default:
+            throw new Error('Unhandle event.')
+        }
+      } catch (error) {
+        return res.json({ error: 'Webhook handle failed.' })
+      }
     }
 
-    res.json({ received: true })
+    res.json({ ok: true })
   } else {
     res.setHeader('Allow', 'POST')
-    res.status(405).end('Method not allowed')
+    res.status(405).end('Method no allowed')
   }
 }
