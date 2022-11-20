@@ -8,6 +8,7 @@ import { getPrismicClient } from '../../services/prismic'
 
 import styles from './styles.module.scss'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 type Post = {
   slug: string
@@ -21,6 +22,8 @@ interface PostsProps {
 }
 
 export default function Posts({ posts }: PostsProps) {
+  const { data: session } = useSession()
+
   return (
     <>
       <Head>

@@ -46,7 +46,7 @@ export default function PostPreview({ post }: PostPreviewProps) {
 
           <div className={styles.continueReading}>
             Wanna continue reading?
-            <Link legacyBehavior href={`/posts/${post.slug}`}>
+            <Link legacyBehavior href={`/`}>
               <a>Subscribe now 🤗</a>
             </Link>
           </div>
@@ -88,5 +88,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       post,
     },
+    redirect: 60 * 30, // 30 minutes
   }
 }
